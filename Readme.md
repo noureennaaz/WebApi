@@ -4,6 +4,7 @@
 
 ### Create Entity (POST api/Values/create-entity)
 Creates a new entity with the provided data.
+
 **Input Format:** 
 ```json
 {
@@ -34,6 +35,7 @@ Creates a new entity with the provided data.
 
 ### Get Entity By Id (GET get-entity-by-id/{id})
 Retrieves the entity with the specified ID.
+
 **Input Format -**
 ```json
 {
@@ -60,7 +62,8 @@ Retrieves a list of entities with the search string matching the following field
 ### Search Entities Based on Parameters (GET /filter):
 Retrieves a list of entities with optional search and filter parameters.
 Can search based on these parameters.
-**Input Format - **
+
+**Input Format -**
 ```json
 {
   "gender": "male",
@@ -71,11 +74,15 @@ Can search based on these parameters.
 ```
 
 ### List Entities (GET /api/get-all-entities):
+
 Retrieves all the entities within the database.
 
 
+
 ### Update Entity (POST /api/update):
+
 Updates an existing entity with the provided data.
+
 **Input Format -** 
 ```json
 {
@@ -106,9 +113,12 @@ Updates an existing entity with the provided data.
 ```
 
 ### Delete Entity (DELETE /api/entities/{id}):
+
 Deletes the entity with the specified ID.
+
+**Input Format -**
 ```json
-Input Format - 
+
 {
    "id":"string"
 }

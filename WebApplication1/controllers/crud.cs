@@ -24,17 +24,17 @@ namespace WebApplication1.Controllers
 
             try
             {
-                
+
                 var Entities = _database.GetCollection<Entity>("entity");
                 if (json.ValueKind != JsonValueKind.Object)
                 {
                     return BadRequest("Invalid JSON input: Expected an object");
                 }
-                 
+
                 string gender = json.GetProperty("gender").GetString().ToLower();
-                 
+
                 JsonElement namesArray = json.GetProperty("names");
-                
+
                 if (namesArray.ValueKind != JsonValueKind.Array)
                 {
                     return BadRequest("Invalid JSON input: 'names' property is not an array");
@@ -52,7 +52,7 @@ namespace WebApplication1.Controllers
                         MiddleName = middleName,
                         Surname = surname
                     };
-                    
+
                     NamesList.Add(newName);
                 }
 
@@ -70,7 +70,7 @@ namespace WebApplication1.Controllers
                         City = city,
                         Country = country
                     };
-                    
+
                     addressList.Add(newAddress);
                 }
 
@@ -93,10 +93,10 @@ namespace WebApplication1.Controllers
                         DateOnly = dateOnly,
                         DateType = dateType
                     };
-                    
+
                     dateList.Add(newDate);
                 }
-               
+
                 var newEntity = new Entity
                 {
                     Addresses = addressList,
@@ -255,53 +255,53 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost("Update")]
-public async Task<IActionResult> UpdateEntity([FromBody] Entity entity)
-{
-    try
-    {
-        var Entities = _database.GetCollection<Entity>("entity");
-
-        var filter = Builders<Entity>.Filter.Eq(e => e.Id, entity.Id);
-
-        var existingEntity = await Entities.Find(filter).FirstOrDefaultAsync();
-        if (existingEntity == null)
+        public async Task<IActionResult> UpdateEntity([FromBody] Entity entity)
         {
-            return NotFound("Entity not found");
+            try
+            {
+                var Entities = _database.GetCollection<Entity>("entity");
+
+                var filter = Builders<Entity>.Filter.Eq(e => e.Id, entity.Id);
+
+                var existingEntity = await Entities.Find(filter).FirstOrDefaultAsync();
+                if (existingEntity == null)
+                {
+                    return NotFound("Entity not found");
+                }
+
+                var updateBuilder = Builders<Entity>.Update;
+
+                if (entity.Names != null && entity.Names.Any())
+                {
+                    var namesUpdate = updateBuilder.Set(e => e.Names, entity.Names);
+                    await Entities.UpdateOneAsync(filter, namesUpdate);
+                }
+
+                if (entity.Dates != null && entity.Dates.Any())
+                {
+                    var datesUpdate = updateBuilder.Set(e => e.Dates, entity.Dates);
+                    await Entities.UpdateOneAsync(filter, datesUpdate);
+                }
+
+                if (entity.Addresses != null && entity.Addresses.Any())
+                {
+                    var addressesUpdate = updateBuilder.Set(e => e.Addresses, entity.Addresses);
+                    await Entities.UpdateOneAsync(filter, addressesUpdate);
+                }
+
+                if (!string.IsNullOrEmpty(entity.Gender))
+                {
+                    var genderUpdate = updateBuilder.Set(e => e.Gender, entity.Gender);
+                    await Entities.UpdateOneAsync(filter, genderUpdate);
+                }
+
+                return Ok($"Update Successful");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
-
-        var updateBuilder = Builders<Entity>.Update;
-
-        if (entity.Names != null && entity.Names.Any())
-        {
-            var namesUpdate = updateBuilder.Set(e => e.Names, entity.Names);
-            await Entities.UpdateOneAsync(filter, namesUpdate);
-        }
-
-        if (entity.Dates != null && entity.Dates.Any())
-        {
-            var datesUpdate = updateBuilder.Set(e => e.Dates, entity.Dates);
-            await Entities.UpdateOneAsync(filter, datesUpdate);
-        }
-
-        if (entity.Addresses != null && entity.Addresses.Any())
-        {
-            var addressesUpdate = updateBuilder.Set(e => e.Addresses, entity.Addresses);
-            await Entities.UpdateOneAsync(filter, addressesUpdate);
-        }
-
-        if (!string.IsNullOrEmpty(entity.Gender))
-        {
-            var genderUpdate = updateBuilder.Set(e => e.Gender, entity.Gender);
-            await Entities.UpdateOneAsync(filter, genderUpdate);
-        }
-
-        return Ok($"Update Successful");
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, $"An error occurred: {ex.Message}");
-    }
-}
 
     }
 }
